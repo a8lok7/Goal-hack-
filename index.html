@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Goal Hack - Random AI Prediction</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #080;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    select, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+    }
+    .grid {
+      display: grid;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .tile {
+      width: 40px;
+      height: 40px;
+      background: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 6px;
+    }
+    .safe {
+      background: #4CAF50;
+    }
+    .mine {
+      background: #C62828;
+    }
+  </style>
+</head>
+<body>
+  <h2>Goal Hack - AI Predicts Random Safe Tile</h2>
+
+  <label>Field Size:</label>
+  <select id="size">
+    <option value="small">Small (3x3)</option>
+    <option value="medium">Medium (7x4)</option>
+    <option value="large">Large (10x5)</option>
+  </select>
+
+  <button onclick="initGrid()">Start</button>
+  <div id="grid" class="grid"></div>
+  <button id="next" onclick="predictRow()" style="display:none;">Predict Next Row</button>
+
+  <script>
+    let rows = 0, cols = 0, currentRow = 0, gridTiles = [];
+
+    function initGrid() {
+      const size = document.getElementById("size").value;
+
+      if (size === "small") { rows = 3; cols = 3; }
+      else if (size === "medium") { rows = 7; cols = 4; }
+      else { rows = 10; cols = 5; }
+
+      const total = rows * cols;
+      currentRow = 0;
+      gridTiles = [];
+
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+      for (let i = 0; i < total; i++) {
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.textContent = i + 1;
+        grid.appendChild(tile);
+        gridTiles.push(tile);
+      }
+
+      document.getElementById("next").style.display = "inline-block";
+    }
+
+    function predictRow() {
+      if (currentRow >= rows) return alert("All rows predicted.");
+
+      const start = currentRow * cols;
+      const safeIndex = Math.floor(Math.random() * cols); // Truly random per row
+
+      for (let i = 0; i < cols; i++) {
+        const idx = start + i;
+        if (i === safeIndex) {
+          gridTiles[idx].classList.add("safe");
+        } else {
+          gridTiles[idx].classList.add("mine");
+        }
+      }
+
+      currentRow++;
+    }
+  </script>
+</body>
+</html>
